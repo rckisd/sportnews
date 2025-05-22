@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SportNews{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <a href="{% url 'index' %}" class="logo">SportNews</a>
+                <div class="nav-links">
+                    {% if user.is_authenticated %}
+                        <span class="user-greeting">
+                            Привет, {{ user.username }}!
+                            <a href="{% url 'profile' %}" class="auth-link">Профиль</a> 
+                            <a href="{% url 'logout' %}" class="auth-link">Выйти</a>
+                        </span>
+                    {% else %}
+                        <a href="{% url 'auth' %}" class="auth-link">Вход/Регистрация</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+        <div class="gradient-divider"></div>
+    </header>
+    
+    <main>
+        <div class="content-wrapper" id="page">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>© 2025 SportNews | Все права защищены</p>
+        </div>
+    </footer>
+</body>
+</html>

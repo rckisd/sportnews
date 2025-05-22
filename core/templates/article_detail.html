@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}{{ article.title }} - SportNews{% endblock %}
+{% block content %}
+<div class="content-wrapper" id="page">
+    <div class="detail-card">
+        <div class="detail-header">
+            <h2 class="detail-title">{{ article.title }}</h2>
+            <div class="detail-meta">
+                <div class="detail-meta-item">
+                    {{ article.published_at|date:"d.m.Y" }}
+                </div>
+                <div class="detail-meta-item">
+                    Автор: {{ article.author.username }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="detail-content">
+            {{ article.content }}
+        </div>
+        
+        {% if article.image_url %}
+            <div class="image-wrapper">
+                <img src="{{ article.image_url }}" alt="Изображение новости" class="detail-image">
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="comments-section">
+        <h3 class="section-title" style="font-size: 1.5rem;">Комментарии</h3>
+        
+        {% if comments %}
+            {% for comment in comments %}
+                <div class="comment-card">
+                    <div>
+                        <span class="comment-author">{{ comment.user.username }}</span>
+                        <span class="comment-date">{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                    <p>{{ comment.content }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-comments">Комментариев нет.</div>
+        {% endif %}
+        
+        {% if user.is_authenticated %}
+            <div class="comment-form">
+                <h4>Оставить комментарий</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <textarea class="form-control" name="content" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Отправить</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="empty-comments">Войдите, чтобы оставлять комментарии</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

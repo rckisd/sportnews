@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+    <h2 class="section-title">Новости</h2>
+    {% if articles %}
+        <div class="card-list">
+            {% for article in articles %}
+                <div class="card">
+                    <div class="card-content">
+                        <h3 class="card-title">{{ article.title }}</h3>
+                        <span class="card-date">{{ article.published_at|date:"d.m.Y H:i" }}</span>
+                        <a href="{% url 'article_detail' article.id %}" class="card-link">Подробнее</a>
+                        {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'add_article_to_favorites' article.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="fav-button">★ В избранное</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-message">Новостей нет.</div>
+    {% endif %}
+
+    <h2 class="section-title">События</h2>
+    {% if events %}
+        <div class="card-list">
+            {% for event in events %}
+                <div class="card">
+                    <div class="card-content">
+                        <h3 class="card-title">{{ event.title }}</h3>
+                        <span class="card-date">{{ event.date_time|date:"d.m.Y H:i" }}</span>
+                        <a href="{% url 'event_detail' event.id %}" class="card-link">Подробнее</a>
+                        {% if user.is_authenticated %}
+                            <form method="post" action="{% url 'add_event_to_favorites' event.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="fav-button">★ В избранное</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-message">Событий нет.</div>
+    {% endif %}
+</div>
+{% endblock %}
+

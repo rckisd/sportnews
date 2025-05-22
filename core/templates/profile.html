@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="detail-card">
+        <h2 class="section-title" style="text-align: center;">Личный профиль</h2>
+
+        <div class="detail-content">
+            <p><strong>Логин:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+        </div>
+    </div>
+
+    <!-- Избранные события -->
+    <div class="detail-card">
+        <h3 class="section-title">Избранные события</h3>
+        <ul class="list-unstyled">
+            {% for fav in favorite_events %}
+                <li class="mb-2">
+                    <a href="{% url 'event_detail' fav.event.id %}" class="card-link">{{ fav.event.title }}</a>
+                    <span class="text-muted small">({{ fav.added_at|date:"d.m.Y H:i" }})</span>
+            </li>
+        {% empty %}
+            <li class="empty-message">Нет избранных событий.</li>
+        {% endfor %}
+    </ul>
+    </div>
+
+    <!-- Избранные статьи -->
+    <div class="detail-card">
+        <h3 class="section-title">Избранные статьи</h3>
+        <ul class="list-unstyled">
+            {% for fav in favorite_articles %}
+                <li class="mb-2">
+                    <a href="{% url 'article_detail' fav.article.id %}" class="card-link">{{ fav.article.title }}</a>
+                    <span class="text-muted small">({{ fav.added_at|date:"d.m.Y H:i" }})</span>
+            </li>
+        {% empty %}
+            <li class="empty-message">Нет избранных новостей.</li>
+        {% endfor %}
+    </ul>
+</div>
+</div>
+{% endblock %}
