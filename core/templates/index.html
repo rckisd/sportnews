@@ -4,28 +4,34 @@
 {% block content %}
 <div class="content-wrapper">
     <!-- Секция новостей -->
-    <h2 class="section-title">Новости</h2>
-    {% if articles %}
-        <div class="card-list">
-            {% for article in articles %}
-                <div class="card">
-                    <div class="card-content">
-                        <h3 class="card-title">{{ article.title }}</h3>
-                        <span class="card-date">{{ article.published_at|date:"d.m.Y H:i" }}</span>
-                        <a href="{% url 'article_detail' article.id %}" class="card-link">Подробнее</a>
-                        {% if user.is_authenticated %}
-                            <form method="post" action="{% url 'add_article_to_favorites' article.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="fav-button">★ В избранное</button>
-                            </form>
-                        {% endif %}
-                    </div>
+<h2 class="section-title">Новости</h2>
+{% if main_article or other_articles %}
+    <div class="card-list">
+        <!-- Главная новость -->
+        {% if main_article %}
+            <div class="card main-card">
+                <div class="card-content">
+                    <h3 class="card-title">{{ main_article.title }}</h3>
+                    <span class="card-date">{{ main_article.published_at|date:"d.m.Y H:i" }}</span>
+                    <a href="{% url 'article_detail' main_article.pk %}" class="card-link">Подробнее</a>
                 </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="empty-message">Новостей нет.</div>
-    {% endif %}
+            </div>
+        {% endif %}
+        
+        <!-- Остальные новости -->
+        {% for article in other_articles %}
+            <div class="card">
+                <div class="card-content">
+                    <h3 class="card-title">{{ article.title }}</h3>
+                    <span class="card-date">{{ article.published_at|date:"d.m.Y H:i" }}</span>
+                    <a href="{% url 'article_detail' article.pk %}" class="card-link">Подробнее</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-message">Новостей нет.</div>
+{% endif %}
 
     <!-- Секция событий -->
     <h2 class="section-title">События</h2>

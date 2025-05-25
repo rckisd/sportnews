@@ -7,8 +7,11 @@ from django.contrib import messages
 
 # views.py
 def index(request):
-    main_article = Article.objects.order_by('-published_at').first()
-    other_articles = Article.objects.order_by('-published_at')[1:5]
+    # Берём 5 последних новостей
+    all_articles = Article.objects.order_by('-published_at')[:5]
+    main_article = all_articles[0] if len(all_articles) > 0 else None
+    other_articles = all_articles[1:] if len(all_articles) > 1 else []
+    
     events = Event.objects.order_by('date_time')[:5]
     matches = Match.objects.order_by('date_time')[:5]
     
