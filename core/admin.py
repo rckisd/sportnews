@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Article, Event, Comment, Favorite
+from .models import User, Article, Event, Match, Comment, Favorite
 
 class CommentInlineArticle(admin.TabularInline):
     model = Comment
@@ -71,6 +71,20 @@ class EventAdmin(admin.ModelAdmin):
     def comment_count(self, obj):
         return obj.comment_set.count()
     comment_count.short_description = 'Количество комментариев'
+
+@admin.register(Match)
+class MatchAdmin(admin.ModelAdmin):
+    list_display = ('team_a', 'team_b', 'date_time', 'status', 'tournament')
+    list_filter = ('status', 'tournament')
+    date_hierarchy = 'date_time'
+    search_fields = ('team_a', 'team_b', 'tournament')
+    fields = (
+        'team_a', 'team_b', 
+        'score_a', 'score_b',
+        'date_time', 'status',
+        'tournament', 'location'
+    )
+
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):

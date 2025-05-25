@@ -56,8 +56,34 @@ class Event(models.Model):
     def __str__(self):
         return self.title
 
+class Match(models.Model):
+    STATUS_CHOICES = (
+        ('upcoming', 'Предстоящий'),
+        ('live', 'В прямом эфире'),
+        ('finished', 'Завершенный'),
+    )
+    team_a = models.CharField('Команда A', max_length=100)
+    team_b = models.CharField('Команда B', max_length=100)
+    score_a = models.PositiveSmallIntegerField('Счёт команды A', default=0)
+    score_b = models.PositiveSmallIntegerField('Счёт команды B', default=0)
+    date_time = models.DateTimeField('Дата и время матча')
+    status = models.CharField(
+        'Статус', max_length=10, choices=STATUS_CHOICES, default='upcoming'
+    )
+    tournament = models.CharField('Турнир', max_length=200, blank=True)
+    location = models.CharField('Место проведения', max_length=200, blank=True)
+
+    class Meta:
+        db_table = 'matches'
+        verbose_name = 'Матч'
+        verbose_name_plural = 'Матчи'
+        ordering = ['date_time']
+    
+    def __str__(self):
+        return f"{self.team_a} vs {self.team_b}"
+
+
 class Comment(models.Model):
-    """Комментарий к новости или событию"""
     user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
     article = models.ForeignKey(
         Article, verbose_name='Новость', on_delete=models.CASCADE, null=True, blank=True
@@ -65,20 +91,21 @@ class Comment(models.Model):
     event = models.ForeignKey(
         Event, verbose_name='Событие', on_delete=models.CASCADE, null=True, blank=True
     )
+    match = models.ForeignKey(  # Добавляем новое поле
+        'Match', verbose_name='Матч', on_delete=models.CASCADE, null=True, blank=True
+    )
     content = models.TextField('Содержание')
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
 
     class Meta:
-        db_table = 'comments'
-        verbose_name = 'Комментарий'
-        verbose_name_plural = 'Комментарии'
         constraints = [
             models.CheckConstraint(
                 check=(
-                    models.Q(article__isnull=False, event__isnull=True) |
-                    models.Q(article__isnull=True, event__isnull=False)
+                    models.Q(article__isnull=False, event__isnull=True, match__isnull=True) |
+                    models.Q(article__isnull=True, event__isnull=False, match__isnull=True) |
+                    models.Q(article__isnull=True, event__isnull=True, match__isnull=False)
                 ),
-                name='check_comment_article_or_event'
+                name='check_comment_target'
             )
         ]
 

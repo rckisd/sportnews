@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}{{ match.team_a }} vs {{ match.team_b }} - SportNews{% endblock %}
+{% block content %}
+<div class="content-wrapper" id="page">
+    <div class="detail-card">
+        <div class="detail-header">
+            <h2 class="detail-title">{{ match.team_a }} vs {{ match.team_b }}</h2>
+            <div class="detail-meta">
+                <div class="detail-meta-item">
+                    {{ match.date_time|date:"d.m.Y H:i" }}
+                </div>
+                <div class="detail-meta-item status-{{ match.status|lower }}">
+                    {{ match.get_status_display }}
+                </div>
+                {% if match.tournament %}
+                <div class="detail-meta-item">
+                    Турнир: {{ match.tournament }}
+                </div>
+                {% endif %}
+                {% if match.location %}
+                <div class="detail-meta-item">
+                    Место: {{ match.location }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="match-score">
+            <div class="team">{{ match.team_a }}</div>
+            <div class="score">
+                <span class="score-number">{{ match.score_a }}</span>
+                <span class="vs">VS</span>
+                <span class="score-number">{{ match.score_b }}</span>
+            </div>
+            <div class="team">{{ match.team_b }}</div>
+        </div>
+    </div>
+    
+    <!-- Добавьте секцию комментариев по аналогии с другими шаблонами -->
+</div>
+{% endblock %}

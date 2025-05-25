@@ -10,5 +10,6 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     path('favorite/article/<int:article_id>/', views.add_article_to_favorites, name='add_article_to_favorites'),
     path('favorite/event/<int:event_id>/', views.add_event_to_favorites, name='add_event_to_favorites'),
-
+    path('match/<int:pk>/', views.match_detail, name='match_detail'),
+    path('matches/', views.all_matches, name='all_matches'),
 ]

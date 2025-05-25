@@ -1,0 +1,31 @@
+<!-- all_matches.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="matches-container">
+    <h1>Все матчи</h1>
+    <div class="matches-grid">
+        {% for match in matches %}
+        <div class="match-card">
+            {% if match.image_url %}
+            <img src="{{ match.image_url }}" alt="{{ match.team_a }} vs {{ match.team_b }}" class="match-image">
+            {% endif %}
+            <div class="match-content">
+                <div class="teams-row">
+                    <span class="team">{{ match.team_a }}</span>
+                    <span class="vs">vs</span>
+                    <span class="team">{{ match.team_b }}</span>
+                </div>
+                <div class="match-meta">
+                    <span class="match-date">{{ match.date_time|date:"d.m.Y H:i" }}</span>
+                    <span class="match-status status-{{ match.status|lower }}">
+                        {{ match.get_status_display }}
+                    </span>
+                </div>
+                <a href="{% url 'match_detail' match.id %}" class="match-link">Подробнее</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

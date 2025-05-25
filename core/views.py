@@ -1,16 +1,22 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Article, Event, Comment
+from .models import Article, Event, Match, Comment
 from .forms import LoginForm, RegisterForm
 from django.contrib.auth import authenticate, login, logout
 from .models import Favorite
 from django.contrib import messages
 
+# views.py
 def index(request):
-    articles = Article.objects.order_by('-published_at')
-    events = Event.objects.order_by('date_time')
+    main_article = Article.objects.order_by('-published_at').first()
+    other_articles = Article.objects.order_by('-published_at')[1:5]
+    events = Event.objects.order_by('date_time')[:5]
+    matches = Match.objects.order_by('date_time')[:5]
+    
     return render(request, 'index.html', {
-        'articles': articles,
-        'events': events
+        'main_article': main_article,
+        'other_articles': other_articles,
+        'events': events,
+        'matches': matches
     })
 
 def article_detail(request, pk):
@@ -24,6 +30,30 @@ def event_detail(request, pk):
     event = get_object_or_404(Event, pk=pk)
     comments = Comment.objects.filter(event=event).order_by('created_at')
     return render(request, 'event_detail.html', {'event': event, 'comments': comments})
+
+def match_detail(request, pk):
+    match = get_object_or_404(Match, pk=pk)
+    comments = Comment.objects.filter(match=match).order_by('created_at')
+    
+    if request.method == 'POST' and request.user.is_authenticated:
+        content = request.POST.get('content', '').strip()
+        if content:
+            Comment.objects.create(
+                user=request.user,
+                match=match,
+                content=content
+            )
+            return redirect('match_detail', pk=pk)
+    
+    return render(request, 'match_detail.html', {
+        'match': match,
+        'comments': comments
+    })
+
+# views.py
+def all_matches(request):
+    matches = Match.objects.order_by('-date_time')
+    return render(request, 'all_matches.html', {'matches': matches})
 
 def auth_view(request):
     """Отдельная страница для авторизации/регистрации"""
